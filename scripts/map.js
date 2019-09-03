@@ -88,9 +88,33 @@ function layeredMap() {
     });
     fiskLayerGroup.set('name', layerGroupName);
 
-    function LayerControl() {
-        this.layers = null;
-        this.changeLayerListener = this.on('change:layerGroup', this.updateLayers);
+    OpenLayersLayerControlDelegate = {
+        getRootLayerGroup: (map) => {
+            return map.getLayerGroup();
+        },
+        getLayerName: (layer) => {
+            return layer.get('name');
+        },
+        setLayerName: (layer, name) => {
+            layer.set('name', name);
+        },
+        getSublayers: (layerGroup) => {
+            return layerGroup.getLayers();
+        },
+        isLayerGroup: (layer) => {
+            return layer instanceof ol.layer.Group;
+        },
+        configureControl: (control) => {
+            LayerControl.prototype.setMap = function(map) {
+                ol.control.Control.prototype.setMap.call(control, map);
+                control.buildLayersUI(control.delegate.getRootLayerGroup(map));
+            }
+        }
+    };
+
+    function LayerControl(delegate) {
+        this.delegate = delegate;
+        this.delegate.configureControl(this);
     }
     LayerControl.prototype = new ol.control.Control({
         element: (() => {
@@ -99,34 +123,23 @@ function layeredMap() {
             container.textContent = 'Layers: ';
             return container;
         })(),
-        // render: (() => {
-        //     debugger;
-        // }),
-        // changed: (() => {
-        //     debugger;
-        // })
     });
-    // LayerControl.prototype.updateLayers = (() => {
-    //     debugger;
-    // });
-    LayerControl.prototype.setMap = function(map) {
-        ol.control.Control.prototype.setMap.call(this, map);
-        this.buildLayersUI(map.getLayerGroup());
-    };
+
     LayerControl.prototype.buildLayersUI = function(rootLayerGroup) {
-        rootLayerGroup.set('name', 'Map Layers:');
+        this.delegate.setLayerName(rootLayerGroup, 'Map Layers:');
         const layersUI = document.createElement('ol');
         layersUI.appendChild(this.buildLayerGroupUI(rootLayerGroup));
         this.element.appendChild(layersUI);
     };
+
     LayerControl.prototype.buildLayerGroupUI = function(layerGroup) {
         const layerGroupListItem = document.createElement('li');
-        layerGroupListItem.appendChild(document.createTextNode(layerGroup.get('name') || '***'));
-        const children = layerGroup.getLayers();
+        layerGroupListItem.appendChild(document.createTextNode(this.delegate.getLayerName(layerGroup) || '***'));
+        const children = this.delegate.getSublayers(layerGroup);
         if (children.getLength()) {
             const layerGroupChildren = layerGroupListItem.appendChild(document.createElement('ol'));
             children.forEach((child) => {
-                if (child instanceof ol.layer.Group) {
+                if (this.delegate.isLayerGroup(child)) {
                     layerGroupChildren.appendChild(this.buildLayerGroupUI(child));
                 } else {
                     layerGroupChildren.appendChild(this.buildLayerUI(child));
@@ -135,11 +148,13 @@ function layeredMap() {
         }
         return layerGroupListItem;
     };
+
     LayerControl.prototype.buildLayerUI = function(layer) {
         const layerListItem = document.createElement('li');
-        layerListItem.appendChild(document.createTextNode(layer.get('name') || 'Layer'));
+        layerListItem.appendChild(document.createTextNode(this.delegate.getLayerName(layer) || 'Layer'));
         return layerListItem;
     };
+
 
     const view = new ol.View({
         center: ol.proj.fromLonLat(fiskLayerGroupCenter),
@@ -155,7 +170,7 @@ function layeredMap() {
             fiskLayerGroup
         ],
         controls: [
-            new LayerControl()
+            new LayerControl(OpenLayersLayerControlDelegate)
         ],
         target: 'map',
         numZoomLevels: 20
