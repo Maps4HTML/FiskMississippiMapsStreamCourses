@@ -4,7 +4,7 @@
   "attribution": "Public Domain.",
   "scheme": "tms",
   "tiles": [
-    "https://earthmarks.github.io/FiskMississippiMapsStreamCourses/sheet04/{z}/{x}/{-y}.png"
+    "https://earthmarks.github.io/FiskMississippiMapsStreamCourses/sheet02/{z}/{x}/{-y}.png"
   ],
   "bounds": [-92.70756545472462, 33.02407078465588, -88.65406790680284, 35.27414929261117],
   "minzoom": 6,
