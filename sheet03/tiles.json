@@ -1,0 +1,12 @@
+{
+  "tilejson": "2.2.0",
+  "name": "Mississippi Stream Courses sheet 4 - Harold Fisk, US Army Corps of Engineers",
+  "attribution": "Public Domain.",
+  "scheme": "tms",
+  "tiles": [
+    "https://earthmarks.github.io/FiskMississippiMapsStreamCourses/sheet04/{z}/{x}/{-y}.png"
+  ],
+  "bounds": [-92.64710999091871, 30.90807578948790, -88.67752165286296, 33.17549574297950],
+  "minzoom": 6,
+  "maxzoom": 12
+}
