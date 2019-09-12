@@ -30,7 +30,7 @@ The tiles were generated with gdal2html.
 <a href="http://www.osgeo.org/">OSGeo</a>
 <a href="http://code.google.com/soc/">GSoC</a>
 
-<p>Earthmarks Limited 2019 places the generated tilesin the public domain.</p>
+<p>Earthmarks Limited places the generated tiles in the public domain.</p>
 <p>Earthmarks Limited is registered in England and Wales No. 8722282</p>
 <p>Registered office: F3, 191 Narborough Road, Leicester, LE3 0PE, UK</p>
 
